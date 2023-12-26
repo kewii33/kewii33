@@ -115,11 +115,15 @@
             $('#temperature').append(temp);
         })
 
-        function makeCard() {
-            let image = $('#image').val();
-            let title = $('#title').val();
-            let comment = $('#comment').val();
-            let star = $('#star').val();
+        let docs = await getDocs(collection(db, "movies"));
+        docs.forEach((doc) => {
+            let row = doc.data();
+            console.log(row);
+
+            let image = row['image'];
+            let title = row['title'];
+            let comment = row['comment'];
+            let star = row['star'];
 
             let temp_html = `           
             <div class="col">
@@ -134,7 +138,9 @@
                 </div>
             </div>`;
             $('#card').append(temp_html);
-        }
+        });
+
+
     </script>
 </head>
 
