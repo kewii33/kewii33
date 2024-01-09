@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="reset.css" />
+    <link rel="stylesheet" href="homework_movie.css" />
+  </head>
+
+  <body>
+    <header>
+      <a href="homework_movie.html">
+        <h1>내배캠 최고 평점 영화 콜렉션</h1>
+      </a>
+    </header>
+
+    <form class="search" onsubmit="search(event)">
+      <label>영화 검색 : </label>
+      <input
+        type="text"
+        id="search-input"
+        placeholder="영화 제목 검색"
+        autofocus
+      />
+      <button type="submit" id="search-btn">검색</button>
+    </form>
+
+    <div id="movie-list">
+      <div id="movie-card">
+        <img
+          src="https://image.tmdb.org/t/p/w500/${movie.poster_path}"
+          alt="..."
+        />
+        <div class="movie-card-content">
+          <h3 class="movie-title"></h3>
+          <p class="movie-description"></p>
+          <p class="movie-rating"></p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function fetchData() {
+        const apiUrl =
+          "https://api.themoviedb.org/3/movie/top_rated?api_key=230735742276cb0c5582baaa13143d86&language=en-US&page=1";
+
+        return fetch(apiUrl)
+          .then((response) => response.json())
+          .then((data) => data.results)
+          .catch((error) => {
+            console.error("Error fetching data:", error);
+          });
+      }
+
+      function renderData(movies) {
+        const movieListBox = document.getElementById("movie-list");
+        movieListBox.innerHTML = "";
+
+        movies.forEach((movie) => {
+          const card = document.createElement("div");
+          card.className = "movie-card";
+          card.innerHTML = `<img src="https://image.tmdb.org/t/p/w500/${movie.poster_path}" alt="...">
+            <div class="movie-card-content">
+                <h3 class="movie-title">${movie.title}</h3>
+                <p class="movie-description">${movie.overview}</p>
+                <p class="movie-rating">rating : ${movie.vote_average}</p>
+            </div>`;
+
+          movieListBox.appendChild(card);
+
+          card.addEventListener("click", function () {
+            movieId(movie.title, movie.id);
+          });
+        });
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        fetchData().then((data) => {
+          renderData(data);
+        });
+      });
+
+      function search(event) {
+        event.preventDefault();
+        const searchInput = document
+          .getElementById("search-input")
+          .value.toLowerCase();
+
+        fetchData().then((data) => {
+          if (searchInput !== "") {
+            const searchResults = data.filter((movie) =>
+              movie.title.toLowerCase().includes(searchInput)
+            );
+            renderData(searchResults);
+          } else {
+            renderData(data);
+          }
+        });
+      }
+
+      function movieId(title, IdNum) {
+        alert(`<${title}>의 ID : ${IdNum}`);
+      }
+    </script>
+  </body>
+</html>
